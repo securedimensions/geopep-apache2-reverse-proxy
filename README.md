@@ -10,7 +10,7 @@ Apache2 reverse proxy configuration that you configure (details below) and appli
 from the 'geoPDP' module based on a GeoXACML policy. How to build and run a docker container for the 'geoPDP' is described [here](todo).
 
 ## Build the docker image
-** Make sure you have 'ansible' installed **
+**Make sure you have 'ansible' installed**
 Change directory to where you like to clone this repository. For the ease of description, let's assume that this is '/opt'.
 
 Now, clone this repository with
