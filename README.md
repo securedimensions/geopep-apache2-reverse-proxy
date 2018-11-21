@@ -11,6 +11,7 @@ from the 'geoPDP' module based on a GeoXACML policy. How to build and run a dock
 
 ## Build the docker image
 **Make sure you have 'ansible' installed**
+
 Change directory to where you like to clone this repository. For the ease of description, let's assume that this is '/opt'.
 
 Now, clone this repository with
