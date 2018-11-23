@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpenLayers with protected Geoserver via geoPEP</title>
+
+    <!-- Include the third party CSS files -->
+    <link href="/css/SD.css" type="text/css" rel="stylesheet" charset="utf-8" id="SD">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.css" integrity="sha256-rQq4Fxpq3LlPQ8yP11i6Z2lAo82b6ACDgd35CKyNEBw=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@3.0.0/src/ol-layerswitcher.css" />
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        #map {
+            width: 800px;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+<div id="heading" style="background-color: white;">
+<table border="0" width="100%">
+
+  <tr>
+
+    <td width="20%"><p align="left"><img src="/SD.gif" alt="" height="80" border="0"></p></td>
+
+    <td width="40%">
+        <font face="Britannic Bold" color="#008000" size="6"><b>Secure Dimensions GmbH</b></font><br>
+        <font face="Britannic Bold" color="#008000" size="3"><b>Holistic Geosecurity</b></font>
+    </td>
+  </tr>
+
+</table>
+</div>
+
+<hr>
+    <div class="container body-content">
+
+        <div class="row">
+            <div class="col-md-12">
+                <h2>The map with overlay of protected WMS</h2>
+                <p>This example illustrates the use of the OpenLyers JS library to draw a composite map on top of the Bing basemap with overlay WMS tiles served from a protected Geoserver via the docker container geopep that you just created</p>
+                <div id="map"></div>
+            </div>
+        </div>
+	<div class="row">
+            <div class="col-md-12">
+                <button id="loginButton">GO!</button>
+                <button id="logoutButton" style="display:none">STOP!</button>
+                <span id="name"></span>
+            </div>
+        </div>
+
+<hr/>
+
+<div id="footer" style="background-color: white;">
+<table border="0" width="100%">
+  <tr>
+    <td width="30%" align="left"><font face="Britannic Bold" size="2">Copyright &copy; <?php print date('Y')?> Secure Dimensions GmbH</font></td>
+    <td width="15%" align="right"><font face="Britannic Bold" size="2"><a href="/TermsOfUse.html" target="_S">Terms Of Use</a></font></td>
+    <td width="15%" align="right"><font face="Britannic Bold" size="2"><a href="/PrivacyStatement.html" target="_S">Privacy Statement</a></font></td>
+    <td width="15%" align="right"><font face="Britannic Bold" size="2"><a href="/CookieStatement.html" target="_S">Cookie Statement</a></font></td>
+    <td width="25%" align="right"><font face="Britannic Bold" size="2">Last updated 10.10.2018</font></td>
+  </tr>
+  <tr>
+</table>
+<hr/>
+<div>The project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 689812. It’s coordinated by IIASA and supported by 18 partner institutions from nine different European countries. </div>
+
+</div>
+    <!-- Include the third party JS libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.js" integrity="sha256-77IKwU93jwIX7zmgEBfYGHcmeO0Fx2MoWB/ooh9QkBA=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/ol-layerswitcher@3.0.0"></script>
+
+    <!-- Include the site-specific JS files -->
+    <script src="js/demoMap.js"></script>
+    <script src="js/site.js"></script>
+</body>
+</html>
+
