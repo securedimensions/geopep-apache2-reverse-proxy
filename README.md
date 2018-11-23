@@ -110,7 +110,7 @@ http://<THE IP OF YOUR MACHINE>/geoserver/topp/wms?service=WMS&version=1.1.0&req
 
 ## Viewer example
 You can use the OpenLayers based simple viewer to see the geoPEP working by opening your Web Browser using this URL:
-''''
+````
 http://<THE IP OF YOUR MACHINE>:<THE PORT THE geoPEP IS EXPOSED>/index.html
 ````
 	
