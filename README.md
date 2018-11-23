@@ -9,6 +9,9 @@ Once you've created and launched the 'geopep-apache2-reverse-proxy' container, i
 Apache2 reverse proxy configuration that you configure (details below) and applies standardized authorization decisions received 
 from the 'geoPDP' module based on a GeoXACML policy. How to build and run a docker container for the 'geoPDP' is described [here](https://github.com/securedimensions/geopdp-docker).
 
+The following figure illustrates the co-play:
+![geoPEP and geoPDP working together](illustration.png)
+
 ## Build the docker image
 **Make sure you have 'ansible' installed!**
 
