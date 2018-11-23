@@ -95,6 +95,17 @@ a default [geoserver](http://http://geoserver.org/) deployment on a Secure Dimen
 
 </VirtualHost>
 ```
+## Test the geoPEP
+You can test the geoPEP deployment **after you have the geoPDP running** using the following example URLs. Using the example configuration for the Apache2 reverse proxy, these requests will be served by the Geoserver on http://demo.secure-dimensions.de
+
+This WMS request will cause the geoPEP **not** to process the image (see uloaded image 1):
+````
+http://<THE IP OF YOUR MACHINE>/geoserver/topp/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=topp%3Astates&TILED=true&access_token=200fcaad3e27d4387172ea93daea8686c706f0c9&WIDTH=320&HEIGHT=320&CRS=EPSG%3A3857&STYLES=&FORMAT_OPTIONS=dpi%3A113&BBOX=-7514065.628545966%2C5009377.085697312%2C-5009377.08569731%2C7514065.628545968
+````
+This WMS request will cause the geoPEP to **redact** the image (see uploaded image 2):
+````
+http://<THE IP OF YOUR MACHINE>/geoserver/topp/wms?service=WMS&version=1.1.0&request=GetMap&layers=topp:states&styles=&bbox=-124.73142200000001,24.955967,-66.969849,49.371735&width=768&height=330&srs=EPSG:4326&format=image%2Fpng
+````
 
 ## More information
 This example project uses a precompiled 'mod_authz_geopep' module for Debian Jessie (8.11).
