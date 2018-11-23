@@ -109,9 +109,14 @@ http://<THE IP OF YOUR MACHINE>/geoserver/topp/wms?service=WMS&version=1.1.0&req
 ````
 
 ## Viewer example
-You can use the OpenLayers based simple viewer to see the geoPEP working by opening your Web Browser using 
+You can use the OpenLayers based simple viewer to see the geoPEP working by opening your Web Browser using this URL:
 ''''
 http://<THE IP OF YOUR MACHINE>:<THE PORT THE geoPEP IS EXPOSED>/index.html
+````
+	
+**You must add the mount the apache2/html directory to the docker container when creating it!**
+````
+-v /opt/geopep-apache2-reverse-proxy/apache2/html:/var/www/html
 ````
 	
 ## More information
