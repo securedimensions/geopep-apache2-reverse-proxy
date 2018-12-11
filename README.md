@@ -83,12 +83,16 @@ a default [geoserver](http://http://geoserver.org/) deployment on a Secure Dimen
 
         GeoPEP.WMS      on
         GeoPDP.Host     <put the IP address of the machine that runs the geoPDP here>
-        GeoPDP.Port     8080 #don't change this if you are using the geoPDP default configuration
+        #don't change this if you are using the geoPDP default configuration
+	GeoPDP.Port     8080 
         GeoPDP.Path     /authzforce-ce/domains/A0bdIbmGEeWhFwcKrC9gSQ/pdp #don't change this
-        GeoPDP.Scheme   http #don't change this if you are using the geoPDP default configuration
+        #don't change this if you are using the geoPDP default configuration
+	GeoPDP.Scheme   http 
 
-        ProxyPass http://sp.landsense.secure-dimensions.de:8080/geoserver #You can change this to map your backend WMS
-        ProxyPassReverse http://sp.landsense.secure-dimensions.de:8080/geoserver #You can change this to map your backend WMS
+	#You can change this to map your backend WMS
+        ProxyPass http://demo.landsense.secure-dimensions.de:8080/geoserver 
+	#You can change this to map your backend WMS
+        ProxyPassReverse http://demo.landsense.secure-dimensions.de:8080/geoserver 
     </Location>
 
 
