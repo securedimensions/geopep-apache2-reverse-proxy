@@ -90,9 +90,9 @@ a default [geoserver](http://http://geoserver.org/) deployment on a Secure Dimen
 	GeoPDP.Scheme   http 
 
 	#You can change this to map your backend WMS
-        ProxyPass http://demo.secure-dimensions.de:8080/geoserver 
+        ProxyPass http://demo.secure-dimensions.de/geoserver 
 	#You can change this to map your backend WMS
-        ProxyPassReverse http://demo.secure-dimensions.de:8080/geoserver 
+        ProxyPassReverse http://demo.secure-dimensions.de/geoserver 
     </Location>
 
 
