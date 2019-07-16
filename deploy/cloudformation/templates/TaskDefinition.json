@@ -269,7 +269,7 @@
                     ]
                 },
                 "VpcId": {
-                    "Ref": "VPC"
+                    "Ref": "Vpc"
                 },
                 "SecurityGroupIngress": [
                     {
@@ -373,7 +373,7 @@
                 ],
                 "TargetType": "ip",
                 "VpcId": {
-                    "Ref": "VPC"
+                    "Ref": "Vpc"
                 }
             }
         },
