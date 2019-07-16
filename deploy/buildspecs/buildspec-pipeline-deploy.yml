@@ -98,7 +98,7 @@ phases:
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopep:v$GEOPEP_LATEST
 
       # Record new version
-      - echo '{"docker":' '"'$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopep_latest:v$GEOPEP_LATEST'"}' > deployed.json
+      - echo '{"docker":' '"'$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopep:v$GEOPEP_LATEST'"}' > deployed.json
 
       # Deploy the stacks
       - mvn cloudformation:deploy
