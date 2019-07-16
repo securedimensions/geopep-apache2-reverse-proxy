@@ -130,7 +130,7 @@
                 "DestinationCidrBlock" : "0.0.0.0/0",
                 "GatewayId" : {
                     "Ref": "InternetGateway"
-                }
+                },
                 "RouteTableId" : {
                     "Ref": "PublicRouteTable"
                 }
