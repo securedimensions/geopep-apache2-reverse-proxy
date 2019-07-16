@@ -80,9 +80,6 @@ phases:
       - export AWS_ACCOUNT_ID="$(echo $CODEBUILD_BUILD_ARN | egrep -o ':[0-9]+:' | egrep -o '[0-9]+')"
   build:
     commands:
-      # Deploy the stacks
-      - mvn cloudformation:deploy
-
       # Login to AWS Elastic Container Repository Service
       - $(aws ecr get-login --no-include-email --region us-east-1)
 
@@ -101,7 +98,10 @@ phases:
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopep:v$GEOPEP_LATEST
 
       # Record new version
-      - echo $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopep_latest:v$GEOPEP_LATEST > target/deployed.txt
+      - echo '{"docker":' '"'$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopep_latest:v$GEOPEP_LATEST'"}' > target/deployed.json
+
+      # Deploy the stacks
+      - mvn cloudformation:deploy
   post_build:
     commands:
 artifacts:

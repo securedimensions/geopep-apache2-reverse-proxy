@@ -1,0 +1,593 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "An example CloudFormation template for Fargate.",
+    "Parameters": {
+        },
+        "Image": {
+            "Type": "String",
+            "Default": "123456789012.dkr.ecr.region.amazonaws.com/image:tag"
+        },
+        "ServiceName": {
+            "Type": "String",
+            "Default": "MyService"
+        },
+        "ContainerPort": {
+            "Type": "Number",
+            "Default": 80
+        },
+        "LoadBalancerPort": {
+            "Type": "Number",
+            "Default": 443
+        },
+        "HealthCheckPath": {
+            "Type": "String",
+            "Default": "/healthcheck"
+        },
+        "HostedZoneName": {
+            "Type": "String",
+            "Default": "company.com"
+        },
+        "Subdomain": {
+            "Type": "String",
+            "Default": "myservice"
+        },
+        "MinContainers": {
+            "Type": "Number",
+            "Default": 2
+        },
+        "MaxContainers": {
+            "Type": "Number",
+            "Default": 10
+        },
+        "AutoScalingTargetValue": {
+            "Type": "Number",
+            "Default": 50
+        },
+        "ExecutionRoleArn": {
+            "Type": "String"
+        },
+        "TaskRoleArn": {
+            "Type": "String"
+        },
+        "AutoscaleRoleArn": {
+            "Type": "String"
+        },
+        "Cidr": {
+            "Type": "String"
+        },
+        "PublicACidr": {
+            "Type": "String"
+        },
+        "PublicBCidr": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "Vpc": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "CidrBlock": {
+                    "Ref": "Cidr"
+                },
+                "EnableDnsSupport": true,
+                "EnableDnsHostnames": true
+            }
+        },
+        "SubnetA": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Fn::Sub": "${AWS::Region}a"
+                },
+                "CidrBlock": {
+                    "Ref": "PublicACidr"
+                },
+                "MapPublicIpOnLaunch": false,
+                "VpcId": {
+                    "Ref": "Vpc"
+                }
+            }
+        },
+        "SubnetB": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Fn::Sub": "${AWS::Region}b"
+                },
+                "CidrBlock": {
+                    "Ref": "PublicBCidr"
+                },
+                "MapPublicIpOnLaunch": false,
+                "VpcId": {
+                    "Ref": "Vpc"
+                }
+            }
+        },
+        "PublicRouteTable": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "Vpc"
+                }
+            }
+        },
+        "PublicAAssociation": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "PublicRouteTable"
+                },
+                "SubnetId": {
+                    "Ref": "SubnetA"
+                }
+            }
+        },
+        "InternetGateway": {
+            "Type" : "AWS::EC2::InternetGateway"
+        },
+        "IGatewayRoute": {
+            "Type" : "AWS::EC2::Route",
+            "Properties" : {
+                "DestinationCidrBlock" : "0.0.0.0/0",
+                "GatewayId" : {
+                    "Ref": "InternetGateway"
+                }
+                "RouteTableId" : {
+                    "Ref": "PublicRouteTable"
+                }
+            }
+        },
+        "PublicBAssociation": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "PrivateRouteTable"
+                },
+                "SubnetId": {
+                    "Ref": "SubnetB"
+                }
+            }
+        },
+        "Cluster": {
+            "Type": "AWS::ECS::Cluster",
+            "Properties": {
+                "ClusterName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            {
+                                "Ref": "ServiceName"
+                            },
+                            "Cluster"
+                        ]
+                    ]
+                }
+            }
+        },
+        "TaskDefinition": {
+            "Type": "AWS::ECS::TaskDefinition",
+            "DependsOn": "LogGroup",
+            "Properties": {
+                "Family": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            {
+                                "Ref": "ServiceName"
+                            },
+                            "TaskDefinition"
+                        ]
+                    ]
+                },
+                "NetworkMode": "awsvpc",
+                "RequiresCompatibilities": [
+                    "FARGATE"
+                ],
+                "Cpu": 256,
+                "Memory": "0.5GB",
+                "ExecutionRoleArn": {
+                    "Ref": "ExecutionRoleArn"
+                },
+                "TaskRoleArn": {
+                    "Ref": "TaskRoleArn"
+                },
+                "ContainerDefinitions": [
+                    {
+                        "Name": {
+                            "Ref": "ServiceName"
+                        },
+                        "Image": {
+                            "Ref": "Image"
+                        },
+                        "PortMappings": [
+                            {
+                                "ContainerPort": {
+                                    "Ref": "ContainerPort"
+                                }
+                            }
+                        ],
+                        "LogConfiguration": {
+                            "LogDriver": "awslogs",
+                            "Options": {
+                                "awslogs-region": {
+                                    "Ref": "AWS::Region"
+                                },
+                                "awslogs-group": {
+                                    "Ref": "LogGroup"
+                                },
+                                "awslogs-stream-prefix": "ecs"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "ContainerSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            {
+                                "Ref": "ServiceName"
+                            },
+                            "ContainerSecurityGroup"
+                        ]
+                    ]
+                },
+                "VpcId": {
+                    "Ref": "Vpc"
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": {
+                            "Ref": "ContainerPort"
+                        },
+                        "ToPort": {
+                            "Ref": "ContainerPort"
+                        },
+                        "SourceSecurityGroupId": {
+                            "Ref": "LoadBalancerSecurityGroup"
+                        }
+                    }
+                ]
+            }
+        },
+        "LoadBalancerSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            {
+                                "Ref": "ServiceName"
+                            },
+                            "LoadBalancerSecurityGroup"
+                        ]
+                    ]
+                },
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": {
+                            "Ref": "LoadBalancerPort"
+                        },
+                        "ToPort": {
+                            "Ref": "LoadBalancerPort"
+                        },
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ]
+            }
+        },
+        "Service": {
+            "Type": "AWS::ECS::Service",
+            "DependsOn": [
+                "ListenerHTTPS"
+            ],
+            "Properties": {
+                "ServiceName": {
+                    "Ref": "ServiceName"
+                },
+                "Cluster": {
+                    "Ref": "Cluster"
+                },
+                "TaskDefinition": {
+                    "Ref": "TaskDefinition"
+                },
+                "DeploymentConfiguration": {
+                    "MinimumHealthyPercent": 100,
+                    "MaximumPercent": 200
+                },
+                "DesiredCount": 2,
+                "HealthCheckGracePeriodSeconds": 30,
+                "LaunchType": "FARGATE",
+                "NetworkConfiguration": {
+                    "AwsvpcConfiguration": {
+                        "AssignPublicIp": "ENABLED",
+                        "Subnets": [
+                            {
+                                "Ref": "SubnetA"
+                            },
+                            {
+                                "Ref": "SubnetB"
+                            }
+                        ],
+                        "SecurityGroups": [
+                            {
+                                "Ref": "ContainerSecurityGroup"
+                            }
+                        ]
+                    }
+                },
+                "LoadBalancers": [
+                    {
+                        "ContainerName": {
+                            "Ref": "ServiceName"
+                        },
+                        "ContainerPort": {
+                            "Ref": "ContainerPort"
+                        },
+                        "TargetGroupArn": {
+                            "Ref": "TargetGroup"
+                        }
+                    }
+                ]
+            }
+        },
+        "TargetGroup": {
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties": {
+                "HealthCheckIntervalSeconds": 10,
+                "HealthCheckPath": {
+                    "Ref": "HealthCheckPath"
+                },
+                "HealthCheckTimeoutSeconds": 5,
+                "UnhealthyThresholdCount": 2,
+                "HealthyThresholdCount": 2,
+                "Name": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            {
+                                "Ref": "ServiceName"
+                            },
+                            "TargetGroup"
+                        ]
+                    ]
+                },
+                "Port": {
+                    "Ref": "ContainerPort"
+                },
+                "Protocol": "HTTP",
+                "TargetGroupAttributes": [
+                    {
+                        "Key": "deregistration_delay.timeout_seconds",
+                        "Value": 60
+                    }
+                ],
+                "TargetType": "ip",
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            }
+        },
+        "ServiceCert": {
+            "Type": "AWS::CertificateManager::Certificate",
+            "Properties": {
+                "DomainName": {
+                    "Fn::Sub": "${Subdomain}.${HostedZoneName}"
+                }
+            }
+        },
+        "ListenerHTTPS": {
+            "Type": "AWS::ElasticLoadBalancingV2::Listener",
+            "Properties": {
+                "DefaultActions": [
+                    {
+                        "TargetGroupArn": {
+                            "Ref": "TargetGroup"
+                        },
+                        "Type": "forward"
+                    }
+                ],
+                "LoadBalancerArn": {
+                    "Ref": "LoadBalancer"
+                },
+                "Port": {
+                    "Ref": "LoadBalancerPort"
+                },
+                "Protocol": "HTTPS",
+                "Certificates": [
+                    {
+                        "CertificateArn": {
+                            "Ref": "ServiceCert"
+                        }
+                    }
+                ]
+            }
+        },
+        "LoadBalancer": {
+            "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+            "Properties": {
+                "LoadBalancerAttributes": [
+                    {
+                        "Key": "idle_timeout.timeout_seconds",
+                        "Value": 60
+                    }
+                ],
+                "Name": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            {
+                                "Ref": "ServiceName"
+                            },
+                            "LoadBalancer"
+                        ]
+                    ]
+                },
+                "Scheme": "internet-facing",
+                "SecurityGroups": [
+                    {
+                        "Ref": "LoadBalancerSecurityGroup"
+                    }
+                ],
+                "Subnets": [
+                    {
+                        "Ref": "SubnetA"
+                    },
+                    {
+                        "Ref": "SubnetB"
+                    }
+                ]
+            }
+        },
+        "DNSRecord": {
+            "Type": "AWS::Route53::RecordSet",
+            "Properties": {
+                "HostedZoneName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            {
+                                "Ref": "HostedZoneName"
+                            },
+                            "."
+                        ]
+                    ]
+                },
+                "Name": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            {
+                                "Ref": "Subdomain"
+                            },
+                            ".",
+                            {
+                                "Ref": "HostedZoneName"
+                            },
+                            "."
+                        ]
+                    ]
+                },
+                "Type": "A",
+                "AliasTarget": {
+                    "DNSName": {
+                        "Fn::GetAtt": [
+                            "LoadBalancer",
+                            "DNSName"
+                        ]
+                    },
+                    "HostedZoneId": {
+                        "Fn::GetAtt": [
+                            "LoadBalancer",
+                            "CanonicalHostedZoneID"
+                        ]
+                    }
+                }
+            }
+        },
+        "LogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+                "LogGroupName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "/ecs/",
+                            {
+                                "Ref": "ServiceName"
+                            },
+                            "TaskDefinition"
+                        ]
+                    ]
+                }
+            }
+        },
+        "AutoScalingTarget": {
+            "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+            "Properties": {
+                "MinCapacity": {
+                    "Ref": "MinContainers"
+                },
+                "MaxCapacity": {
+                    "Ref": "MaxContainers"
+                },
+                "ResourceId": {
+                    "Fn::Join": [
+                        "/",
+                        [
+                            "service",
+                            {
+                                "Ref": "Cluster"
+                            },
+                            {
+                                "Fn::GetAtt": [
+                                    "Service",
+                                    "Name"
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "ScalableDimension": "ecs:service:DesiredCount",
+                "ServiceNamespace": "ecs",
+                "RoleARN": "AutoScalingRoleArn"
+            }
+        },
+        "AutoScalingPolicy": {
+            "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+            "Properties": {
+                "PolicyName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            {
+                                "Ref": "ServiceName"
+                            },
+                            "AutoScalingPolicy"
+                        ]
+                    ]
+                },
+                "PolicyType": "TargetTrackingScaling",
+                "ScalingTargetId": {
+                    "Ref": "AutoScalingTarget"
+                },
+                "TargetTrackingScalingPolicyConfiguration": {
+                    "PredefinedMetricSpecification": {
+                        "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
+                    },
+                    "ScaleInCooldown": 10,
+                    "ScaleOutCooldown": 10,
+                    "TargetValue": {
+                        "Ref": "AutoScalingTargetValue"
+                    }
+                }
+            }
+        }
+    },
+    "Outputs": {
+        "Endpoint": {
+            "Description": "Endpoint",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "https://",
+                        {
+                            "Ref": "DNSRecord"
+                        }
+                    ]
+                ]
+            }
+        }
+    }
+}

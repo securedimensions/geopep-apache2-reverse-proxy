@@ -68,7 +68,42 @@
                                                 <parameterName>OGCGitOAuthToken</parameterName>
                                                 <parameterStoreFieldName>/build/OGCGitOAuthToken</parameterStoreFieldName>
                                             </inputParameter>
-                                       </inputParameters>
+                                        </inputParameters>
+                                        <cliCommandOutputParameterMappings>
+                                            <cliCommandOutputParameterMapping>
+                                                <description>Python Build Conditions</description>
+                                                <command>cat deployed.json</command>
+                                                <parameters>
+                                                    <DockerImage>
+                                                        <parameterName>/docker</parameterName>
+                                                        <description>The docker image of the pep.</description>
+                                                    </DockerImage>
+                                                </parameters>
+                                            </cliCommandOutputParameterMapping>
+                                        </cliCommandOutputParameterMappings>
+                                    </secondaryStack>
+                                    <secondaryStack>
+                                        <stackName>InfrastructureGeoPEPStack</stackName>
+                                        <stackPath>deploy/cloudformation/templates/TaskDefinition.json</stackPath>
+                                        <stackParameterFilePath>deploy/cloudformation/parameters/TaskDefinitionParameters.json</stackParameterFilePath>
+                                        <inputParameters>
+                                            <inputParameter>
+                                                <parameterName>Image</parameterName>
+                                                <matchingParameterName>DockerImage</matchingParameterName>
+                                            </inputParameter>
+                                            <inputParameter>
+                                                <parameterName>ExecutionRoleArn</parameterName>
+                                                <matchingParameterName>ExecutionRoleArn</matchingParameterName>
+                                            </inputParameter>
+                                            <inputParameter>
+                                                <parameterName>TaskRoleArn</parameterName>
+                                                <matchingParameterName>TaskRoleArn</matchingParameterName>
+                                            </inputParameter>
+                                            <inputParameter>
+                                                <parameterName>AutoscaleRoleArn</parameterName>
+                                                <matchingParameterName>AutoscaleRoleArn</matchingParameterName>
+                                            </inputParameter>
+                                        </inputParameters>
                                     </secondaryStack>
                                 </stacks>
                             </stackGroup>

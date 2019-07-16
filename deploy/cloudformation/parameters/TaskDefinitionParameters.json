@@ -1,0 +1,82 @@
+[
+  {
+    "parameterKey": "Image",
+    "parameterValue": "REPLACE",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "ServiceName",
+    "parameterValue": "GeoPEP",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "ContainerPort",
+    "parameterValue": "80",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "LoadBalancerPort",
+    "parameterValue": "443",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "HealthCheckPath",
+    "parameterValue": "/healthcheck",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "HostedZoneName",
+    "parameterValue": "testbed.dev.dgplatform.click",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "Subdomain",
+    "parameterValue": "geopep",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "MinContainers",
+    "parameterValue": "2",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "MaxContainers",
+    "parameterValue": "10",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "AutoScalingTargetValue",
+    "parameterValue": "50",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "ExecutionRoleArn",
+    "parameterValue": "REPLACE",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "TaskRoleArn",
+    "parameterValue": "REPLACE",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "AutoscaleRoleArn",
+    "parameterValue": "REPLACE",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "Cidr",
+    "parameterValue": "192.168.0.0/16",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "PublicACidr",
+    "parameterValue": "192.168.0.0/8",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "PublicBCidr",
+    "parameterValue": "192.168.1.0/8",
+    "usePreviousValue": false
+  }
+]
