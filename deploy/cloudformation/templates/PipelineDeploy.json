@@ -1,0 +1,165 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Creates a CodePipeline to setup the various RnDTools Accounts.",
+    "Metadata": {
+        "AWS::CloudFormation::Designer": {
+            "58bf62a9-8d91-47a0-bcc4-8973342eb5af": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 250,
+                    "y": 30
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "325e5d31-b9bb-4e97-93aa-3c2ef333e317": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 150,
+                    "y": 30
+                },
+                "z": 1,
+                "embeds": []
+            }
+        }
+    },
+    "Resources": {
+        "Build": {
+            "Type": "AWS::CodeBuild::Project",
+            "Properties": {
+                "Artifacts": {
+                    "Location": {
+                        "Fn::Sub": "cloudformation-${AWS::Region}-${AWS::AccountId}"
+                    },
+                    "Name": "PipelineDeploy",
+                    "NamespaceType": "BUILD_ID",
+                    "Packaging": "NONE",
+                    "Type": "S3"
+                },
+                "Description": "Setup and Deploy the GeoPDP docker.",
+                "Environment": {
+                    "ComputeType": "BUILD_GENERAL1_SMALL",
+                    "Image": "aws/codebuild/standard:2.0",
+                    "PrivilegedMode": true,
+                    "Type": "LINUX_CONTAINER"
+                },
+                "Name": "ReversePipelineDeploy",
+                "ServiceRole": "ReversePipelineDeployRole",
+                "Source": {
+                    "Location": "https://github.com/securedimensions/geopep-apache2-reverse-proxy.git",
+                    "Type": "GITHUB",
+                    "BuildSpec": "deploy/buildspecs/buildspec-pipeline-deploy.yml"
+                },
+                "TimeoutInMinutes": 120
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "58bf62a9-8d91-47a0-bcc4-8973342eb5af"
+                }
+            }
+        },
+        "Pipeline": {
+            "Type": "AWS::CodePipeline::Pipeline",
+            "Properties": {
+                "ArtifactStore": {
+                    "Location": {
+                        "Fn::Sub": "codepipeline-${AWS::Region}-${AWS::AccountId}"
+                    },
+                    "Type": "S3"
+                },
+                "Name": "GeoPEP",
+                "RestartExecutionOnUpdate": false,
+                "RoleArn": {
+                    "Ref": "CodePipelineRoleArn"
+                },
+                "Stages": [
+                    {
+                        "Actions": [
+                            {
+                                "ActionTypeId": {
+                                    "Category": "Source",
+                                    "Owner": "ThirdParty",
+                                    "Provider": "GitHub",
+                                    "Version": "1"
+                                },
+                                "Configuration": {
+                                    "Owner": "securedimensions",
+                                    "Repo": "geopep-apache2-reverse-proxy",
+                                    "Branch": "testbed15",
+                                    "OAuthToken": {
+                                        "Ref": "OGCGitOAuthToken"
+                                    }
+                                },
+                                "Name": "Source",
+                                "OutputArtifacts": [
+                                    {
+                                        "Name": "Source"
+                                    }
+                                ],
+                                "RunOrder": 1
+                            }
+                        ],
+                        "Name": "Source"
+                    },
+                    {
+                        "Actions": [
+                            {
+                                "ActionTypeId": {
+                                    "Category": "Build",
+                                    "Owner": "AWS",
+                                    "Provider": "CodeBuild",
+                                    "Version": "1"
+                                },
+                                "Configuration": {
+                                    "ProjectName": {
+                                        "Ref": "Build"
+                                    }
+                                },
+                                "InputArtifacts": [
+                                    {
+                                        "Name": "Source"
+                                    }
+                                ],
+                                "Name": "GeoPEP",
+                                "OutputArtifacts": [
+                                    {
+                                        "Name": "Build"
+                                    }
+                                ],
+                                "RunOrder": 1
+                            }
+                        ],
+                        "Name": "Deploy"
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "325e5d31-b9bb-4e97-93aa-3c2ef333e317"
+                }
+            }
+        },
+        "Repository": {
+            "Type" : "AWS::ECR::Repository",
+            "Properties" : {
+                "RepositoryName" : "geopep"
+            }
+        }
+    },
+    "Parameters": {
+        "CodePipelineRoleArn": {
+            "Type": "String"
+        },
+        "OGCGitOAuthToken": {
+            "Type": "String",
+            "NoEcho": true
+        }
+    },
+    "Outputs": {}
+}

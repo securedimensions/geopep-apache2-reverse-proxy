@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.opengeospatial.testbed15.dcs</groupId>
+    <artifactId>geopdp</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <organization>
+        <name>Open Geospatial Consortium</name>
+        <url>http://www.opengeospatial.org/</url>
+    </organization>
+
+    <scm>
+        <url>https://github.com/securedimensions/geopdp-docker</url>
+        <connection>scm:git:git://github.com/securedimensions/geopdp-docker.git</connection>
+        <developerConnection>scm:git:git@github.com:securedimensions/geopdp-docker.git</developerConnection>
+    </scm>
+
+    <properties>
+        <!-- Template Properties -->
+        <cloudformation_bucket>${env.CLOUDFORMATION_BUCKET}</cloudformation_bucket>
+        <poweruser_role_arn>${env.POWERUSER_ROLE_ARN}</poweruser_role_arn>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sts</artifactId>
+            <version>1.11.532</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.digitalglobe.util</groupId>
+                    <artifactId>cloudformation-maven-plugin</artifactId>
+                    <version>0.4.2</version>
+                    <configuration>
+                        <stackReadOnly>true</stackReadOnly>
+                        <artifacts>false</artifacts>
+                        <outputDirectory>${project.build.directory}</outputDirectory>
+                        <roleArn>${poweruser_role_arn}</roleArn>
+                        <templateS3Prefix>cloudformation</templateS3Prefix>
+                        <templateS3Bucket>${cloudformation_bucket}</templateS3Bucket>
+                        <stackName>PipelineRolesStack</stackName>
+                        <stackPath>deploy/cloudformation/templates/EmptyTemplate.json</stackPath>
+                        <stackParameterFilePaths>
+                            <stackParameterFilePath>deploy/cloudformation/parameters/EmptyTemplateParameters.json</stackParameterFilePath>
+                        </stackParameterFilePaths>
+                        <secondaryStackGroups>
+                            <stackGroup>
+                                <stacks>
+                                    <secondaryStack>
+                                        <stackName>PipelineDeployGeoPEPStack</stackName>
+                                        <stackPath>deploy/cloudformation/templates/PipelineDeploy.json</stackPath>
+                                        <stackParameterFilePath>deploy/cloudformation/parameters/PipelineDeployParameters.json</stackParameterFilePath>
+                                        <inputParameters>
+                                            <inputParameter>
+                                                <parameterName>CodePipelineRoleArn</parameterName>
+                                                <matchingParameterName>CodePipelineRoleArn</matchingParameterName>
+                                            </inputParameter>
+                                            <inputParameter>
+                                                <parameterName>OGCGitOAuthToken</parameterName>
+                                                <parameterStoreFieldName>/build/OGCGitOAuthToken</parameterStoreFieldName>
+                                            </inputParameter>
+                                       </inputParameters>
+                                    </secondaryStack>
+                                </stacks>
+                            </stackGroup>
+                        </secondaryStackGroups>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>deploy</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+               </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

@@ -1,0 +1,106 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: openjdk11
+  pre_build:
+    commands:
+      # Build the Settings.xml file
+      - REPO_USERNAME=$(aws ssm get-parameters --names "/build/repository/username" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+      - REPO_PASSWORD=$(aws ssm get-parameters --with-decryption --names "/build/repository/password" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+      - REPO_CENTRAL_NAME=$(aws ssm get-parameters --names "/build/repository/central/name" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+      - REPO_SNAPSHOT_NAME=$(aws ssm get-parameters --names "/build/repository/snapshot/name" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+      - REPO_CENTRAL_URL=$(aws ssm get-parameters --names "/build/repository/central/url" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+      - REPO_SNAPSHOT_URL=$(aws ssm get-parameters --names "/build/repository/snapshot/url" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+      - REPO_CENTRAL_PLUGIN_NAME=$(aws ssm get-parameters --names "/build/repository/central/plugin/name" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+      - REPO_SNAPSHOT_PLUGIN_NAME=$(aws ssm get-parameters --names "/build/repository/snapshot/plugin/name" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+      - REPO_CENTRAL_PLUGIN_URL=$(aws ssm get-parameters --names "/build/repository/central/plugin/url" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+      - REPO_SNAPSHOT_PLUGIN_URL=$(aws ssm get-parameters --names "/build/repository/snapshot/plugin/url" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+
+      - echo '<?xml version="1.0" encoding="utf-8"?>' > /root/.m2/settings.xml
+      - echo '<settings>' >> /root/.m2/settings.xml
+      - echo '  <profiles>' >> /root/.m2/settings.xml
+      - echo '    <profile>' >> /root/.m2/settings.xml
+      - echo '      <id>repository</id>' >> /root/.m2/settings.xml
+      - echo '      <repositories>' >> /root/.m2/settings.xml
+      - echo '        <repository>' >> /root/.m2/settings.xml
+      - echo '          <snapshots>' >> /root/.m2/settings.xml
+      - echo '            <enabled>false</enabled>' >> /root/.m2/settings.xml
+      - echo '          </snapshots>' >> /root/.m2/settings.xml
+      - echo '          <id>central</id>' >> /root/.m2/settings.xml
+      - echo '          <name>'$REPO_CENTRAL_NAME'</name>' >> /root/.m2/settings.xml
+      - echo '          <url>'$REPO_CENTRAL_URL'</url>' >> /root/.m2/settings.xml
+      - echo '        </repository>' >> /root/.m2/settings.xml
+      - echo '        <repository>' >> /root/.m2/settings.xml
+      - echo '          <snapshots />' >> /root/.m2/settings.xml
+      - echo '          <id>snapshots</id>' >> /root/.m2/settings.xml
+      - echo '          <name>'$REPO_SNAPSHOT_NAME'</name>' >> /root/.m2/settings.xml
+      - echo '          <url>'$REPO_SNAPSHOT_URL'</url>' >> /root/.m2/settings.xml
+      - echo '        </repository>' >> /root/.m2/settings.xml
+      - echo '      </repositories>' >> /root/.m2/settings.xml
+      - echo '      <pluginRepositories>' >> /root/.m2/settings.xml
+      - echo '        <pluginRepository>' >> /root/.m2/settings.xml
+      - echo '          <snapshots>' >> /root/.m2/settings.xml
+      - echo '            <enabled>false</enabled>' >> /root/.m2/settings.xml
+      - echo '          </snapshots>' >> /root/.m2/settings.xml
+      - echo '          <id>central</id>' >> /root/.m2/settings.xml
+      - echo '          <name>'$REPO_CENTRAL_PLUGIN_NAME'</name>' >> /root/.m2/settings.xml
+      - echo '          <url>'$REPO_CENTRAL_PLUGIN_URL'</url>' >> /root/.m2/settings.xml
+      - echo '        </pluginRepository>' >> /root/.m2/settings.xml
+      - echo '        <pluginRepository>' >> /root/.m2/settings.xml
+      - echo '          <snapshots />' >> /root/.m2/settings.xml
+      - echo '          <id>snapshots</id>' >> /root/.m2/settings.xml
+      - echo '          <name>'$REPO_SNAPSHOT_PLUGIN_NAME'</name>' >> /root/.m2/settings.xml
+      - echo '          <url>'$REPO_SNAPSHOT_PLUGIN_URL'</url>' >> /root/.m2/settings.xml
+      - echo '        </pluginRepository>' >> /root/.m2/settings.xml
+      - echo '      </pluginRepositories>' >> /root/.m2/settings.xml
+      - echo '    </profile>' >> /root/.m2/settings.xml
+      - echo '  </profiles>' >> /root/.m2/settings.xml
+      - echo '  <activeProfiles>' >> /root/.m2/settings.xml
+      - echo '    <activeProfile>repository</activeProfile>' >> /root/.m2/settings.xml
+      - echo '  </activeProfiles>' >> /root/.m2/settings.xml
+      - echo '  <servers>' >> /root/.m2/settings.xml
+      - echo '    <server>' >> /root/.m2/settings.xml
+      - echo '      <id>central</id>' >> /root/.m2/settings.xml
+      - echo '      <username>'${REPO_USERNAME}'</username>' >> /root/.m2/settings.xml
+      - echo '      <password>'${REPO_PASSWORD}'</password>' >> /root/.m2/settings.xml
+      - echo '    </server>' >> /root/.m2/settings.xml
+      - echo '    <server>' >> /root/.m2/settings.xml
+      - echo '      <id>snapshots</id>' >> /root/.m2/settings.xml
+      - echo '      <username>'${REPO_USERNAME}'</username>' >> /root/.m2/settings.xml
+      - echo '      <password>'${REPO_PASSWORD}'</password>' >> /root/.m2/settings.xml
+      - echo '    </server>' >> /root/.m2/settings.xml
+      - echo '  </servers>' >> /root/.m2/settings.xml
+      - echo '</settings>' >> /root/.m2/settings.xml
+
+      # Get the environment variables for use in the deployment templates
+      - export CLOUDFORMATION_BUCKET=$(aws ssm get-parameters --names "/build/cloudformation/bucket/name" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+      - export POWERUSER_ROLE_ARN=$(aws ssm get-parameters --names "/build/poweruser/arn" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+      - export AWS_ACCOUNT_ID="$(echo $CODEBUILD_BUILD_ARN | egrep -o ':[0-9]+:' | egrep -o '[0-9]+')"
+  build:
+    commands:
+      # Deploy the stacks
+      - mvn cloudformation:deploy
+
+      # Login to AWS Elastic Container Repository Service
+      - $(aws ecr get-login --no-include-email --region us-east-1)
+
+      # Build and Push the Docker container to the AWS Container Registry
+      - GEOPEP_LATEST=$(aws ssm get-parameters --names "/build/docker/geopdp_latest" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+      - GEOPEP_LATEST=0$GEOPEP_LATEST
+      - GEOPEP_LATEST=$(expr $GEOPEP_LATEST + 1)
+      - aws ssm put-parameter --name "/build/docker/geopdp_latest" --value $GEOPEP_LATEST --type "String" --overwrite > /dev/null 2>&1
+      - docker build --tag geopdp:v$GEOPEP_LATEST .
+      - docker tag geopdp:v$GEOPEP_LATEST $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopdp:v$GEOPEP_LATEST
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopdp:v$GEOPEP_LATEST
+
+      # Record new version
+      - echo $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopdp_latest:v$GEOPEP_LATEST > target/deployed.txt
+  post_build:
+    commands:
+artifacts:
+  files:
+    - '**/*'
+  base-directory: target
+  discard-paths: no

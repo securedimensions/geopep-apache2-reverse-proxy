@@ -1,0 +1,12 @@
+[
+  {
+    "parameterKey": "CodePipelineRoleArn",
+    "parameterValue": "REPLACE",
+    "usePreviousValue": false
+  },
+  {
+    "parameterKey": "OGCGitOAuthToken",
+    "parameterValue": "REPLACE",
+    "usePreviousValue": false
+  }
+]
