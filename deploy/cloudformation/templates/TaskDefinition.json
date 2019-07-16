@@ -393,7 +393,8 @@
             "Properties": {
                 "DomainName": {
                     "Fn::Sub": "${Subdomain}.${HostedZoneName}"
-                }
+                },
+                "ValidationMethod": "DNS"
             }
         },
         "ListenerHTTPS": {
