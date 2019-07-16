@@ -2,7 +2,6 @@
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "An example CloudFormation template for Fargate.",
     "Parameters": {
-        },
         "Image": {
             "Type": "String",
             "Default": "123456789012.dkr.ecr.region.amazonaws.com/image:tag"
