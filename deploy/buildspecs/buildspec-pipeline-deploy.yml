@@ -86,17 +86,22 @@ phases:
       # Login to AWS Elastic Container Repository Service
       - $(aws ecr get-login --no-include-email --region us-east-1)
 
+      # Update ansible
+      - cd ansible
+      - git clone https://github.com/jmferrer/ansible-apache2-reverse-proxy.git
+      - cd ..
+
       # Build and Push the Docker container to the AWS Container Registry
-      - GEOPEP_LATEST=$(aws ssm get-parameters --names "/build/docker/geopdp_latest" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
+      - GEOPEP_LATEST=$(aws ssm get-parameters --names "/build/docker/geopep_latest" | awk '/"Value"/ {print $2}' | sed -e 's/^"//' -e 's/",$//')
       - GEOPEP_LATEST=0$GEOPEP_LATEST
       - GEOPEP_LATEST=$(expr $GEOPEP_LATEST + 1)
-      - aws ssm put-parameter --name "/build/docker/geopdp_latest" --value $GEOPEP_LATEST --type "String" --overwrite > /dev/null 2>&1
-      - docker build --tag geopdp:v$GEOPEP_LATEST .
-      - docker tag geopdp:v$GEOPEP_LATEST $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopdp:v$GEOPEP_LATEST
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopdp:v$GEOPEP_LATEST
+      - aws ssm put-parameter --name "/build/docker/geopep_latest" --value $GEOPEP_LATEST --type "String" --overwrite > /dev/null 2>&1
+      - docker build --tag geopep:v$GEOPEP_LATEST .
+      - docker tag geopep:v$GEOPEP_LATEST $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopep:v$GEOPEP_LATEST
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopep:v$GEOPEP_LATEST
 
       # Record new version
-      - echo $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopdp_latest:v$GEOPEP_LATEST > target/deployed.txt
+      - echo $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/geopep_latest:v$GEOPEP_LATEST > target/deployed.txt
   post_build:
     commands:
 artifacts:
