@@ -71,12 +71,12 @@
   },
   {
     "parameterKey": "PublicACidr",
-    "parameterValue": "192.168.0.0/8",
+    "parameterValue": "192.168.0.0/10",
     "usePreviousValue": false
   },
   {
     "parameterKey": "PublicBCidr",
-    "parameterValue": "192.168.1.0/8",
+    "parameterValue": "192.168.1.0/10",
     "usePreviousValue": false
   }
 ]

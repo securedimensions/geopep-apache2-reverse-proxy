@@ -81,7 +81,7 @@
                 "CidrBlock": {
                     "Ref": "PublicACidr"
                 },
-                "MapPublicIpOnLaunch": false,
+                "MapPublicIpOnLaunch": true,
                 "VpcId": {
                     "Ref": "Vpc"
                 }
@@ -96,7 +96,7 @@
                 "CidrBlock": {
                     "Ref": "PublicBCidr"
                 },
-                "MapPublicIpOnLaunch": false,
+                "MapPublicIpOnLaunch": true,
                 "VpcId": {
                     "Ref": "Vpc"
                 }
