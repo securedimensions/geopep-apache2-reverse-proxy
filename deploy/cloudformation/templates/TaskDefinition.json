@@ -124,6 +124,17 @@
         "InternetGateway": {
             "Type" : "AWS::EC2::InternetGateway"
         },
+        "GatewayAttachment": {
+            "Type" : "AWS::EC2::VPCGatewayAttachment",
+            "Properties" : {
+                "InternetGatewayId" : {
+                    "Ref": "InternetGateway"
+                },
+                "VpcId" : {
+                    "Ref": "Vpc"
+                }
+            }
+        },
         "IGatewayRoute": {
             "Type" : "AWS::EC2::Route",
             "Properties" : {
