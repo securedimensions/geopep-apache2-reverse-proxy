@@ -354,13 +354,6 @@
         "TargetGroup": {
             "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
             "Properties": {
-                "HealthCheckIntervalSeconds": 10,
-                "HealthCheckPath": {
-                    "Ref": "HealthCheckPath"
-                },
-                "HealthCheckTimeoutSeconds": 5,
-                "UnhealthyThresholdCount": 2,
-                "HealthyThresholdCount": 2,
                 "Name": {
                     "Fn::Join": [
                         "",
@@ -376,12 +369,6 @@
                     "Ref": "ContainerPort"
                 },
                 "Protocol": "HTTP",
-                "TargetGroupAttributes": [
-                    {
-                        "Key": "deregistration_delay.timeout_seconds",
-                        "Value": 60
-                    }
-                ],
                 "TargetType": "ip",
                 "VpcId": {
                     "Ref": "Vpc"
