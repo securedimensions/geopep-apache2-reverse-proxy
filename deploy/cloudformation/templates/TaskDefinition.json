@@ -522,67 +522,6 @@
                     ]
                 }
             }
-        },
-        "AutoScalingTarget": {
-            "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
-            "Properties": {
-                "MinCapacity": {
-                    "Ref": "MinContainers"
-                },
-                "MaxCapacity": {
-                    "Ref": "MaxContainers"
-                },
-                "ResourceId": {
-                    "Fn::Join": [
-                        "/",
-                        [
-                            "service",
-                            {
-                                "Ref": "Cluster"
-                            },
-                            {
-                                "Fn::GetAtt": [
-                                    "Service",
-                                    "Name"
-                                ]
-                            }
-                        ]
-                    ]
-                },
-                "ScalableDimension": "ecs:service:DesiredCount",
-                "ServiceNamespace": "ecs",
-                "RoleARN": "AutoScalingRoleArn"
-            }
-        },
-        "AutoScalingPolicy": {
-            "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
-            "Properties": {
-                "PolicyName": {
-                    "Fn::Join": [
-                        "",
-                        [
-                            {
-                                "Ref": "ServiceName"
-                            },
-                            "AutoScalingPolicy"
-                        ]
-                    ]
-                },
-                "PolicyType": "TargetTrackingScaling",
-                "ScalingTargetId": {
-                    "Ref": "AutoScalingTarget"
-                },
-                "TargetTrackingScalingPolicyConfiguration": {
-                    "PredefinedMetricSpecification": {
-                        "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
-                    },
-                    "ScaleInCooldown": 10,
-                    "ScaleOutCooldown": 10,
-                    "TargetValue": {
-                        "Ref": "AutoScalingTargetValue"
-                    }
-                }
-            }
         }
     },
     "Outputs": {
