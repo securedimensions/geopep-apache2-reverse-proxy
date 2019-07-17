@@ -52,6 +52,24 @@
                         <stackParameterFilePaths>
                             <stackParameterFilePath>deploy/cloudformation/parameters/EmptyTemplateParameters.json</stackParameterFilePath>
                         </stackParameterFilePaths>
+                        <cliCommandOutputParameterMappings>
+                            <cliCommandOutputParameterMapping>
+                                <description>Get the real ARN for the service role</description>
+                                <command>aws iam get-role</command>
+                                <commandParameters>
+                                    <commandParameter>
+                                        <parameterName>--role-name</parameterName>
+                                        <matchingParameterName>AutoscaleRoleArn</matchingParameterName>
+                                    </commandParameter>
+                                </commandParameters>
+                                <parameters>
+                                    <AutoscaleRoleArn>
+                                        <parameterName>/Role/Arn</parameterName>
+                                        <description>Role ARN</description>
+                                    </AutoscaleRoleArn>
+                                </parameters>
+                            </cliCommandOutputParameterMapping>
+                        </cliCommandOutputParameterMappings>
                         <secondaryStackGroups>
                             <stackGroup>
                                 <stacks>
