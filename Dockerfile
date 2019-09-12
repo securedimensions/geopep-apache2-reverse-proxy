@@ -15,7 +15,7 @@ COPY mod_authz_geopep/libboost_system.* /usr/lib/
 COPY mod_authz_geopep/libboost_locale* /usr/lib/
 COPY mod_authz_geopep/libboost_iostreams* /usr/lib/
 COPY mod_authz_geopep/libz* /usr/lib/
-COPY apache2/html/favicon.ico /var/www/html/
+ADD apache2/html /var/www/
 
 RUN ansible-playbook -i "localhost," -c local /etc/ansible/site.yml
 
