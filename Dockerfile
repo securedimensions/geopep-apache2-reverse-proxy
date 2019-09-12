@@ -4,8 +4,8 @@ MAINTAINER Secure Dimensions <support@secure-dimensions.de>
 
 #ENV DEBIAN_FRONTEND noninteractive
 RUN rpm -Uvh http://elgis.argeo.org/repos/6/elgis-release-6-6_0.noarch.rpm
-RUN yum install -y centos-release-scl
-RUN yum install -y yum install centos-release-ansible26 python27 libtiff libgeotiff libgdata openssl xslt xmlsec1 xmlsec1-openssl
+RUN yum install -y centos-release-scl epel-release
+RUN yum install -y yum install ansible python27 libtiff libgeotiff libgdata openssl xslt xmlsec1 xmlsec1-openssl
 
 COPY ansible/* /etc/ansible/
 
