@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update
 
-RUN apt-get -y install ansible python-apt libtiff5 libgeotiff2 libgd3 libssl1.0.0 libxml2 libxslt1.1 libltdl-dev libxmlsec1-dev libssl libxmlsec1-openssl libcrypto
+RUN apt-get -y install ansible python-apt libtiff5 libgeotiff2 libgd3 libssl1.0.0 libxml2 libxslt1.1 libltdl-dev libxmlsec1-dev libssl-dev libxmlsec1-openssl
 
 COPY ansible/* /etc/ansible/
 
