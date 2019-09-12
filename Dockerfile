@@ -16,6 +16,7 @@ COPY mod_authz_geopep/libboost_locale* /usr/lib/
 COPY mod_authz_geopep/libboost_iostreams* /usr/lib/
 COPY mod_authz_geopep/libz* /usr/lib/
 ADD apache2/html /var/www/
+COPY apache2/config/geopep.conf /etc/apache2/sites-enabled/
 
 RUN ansible-playbook -i "localhost," -c local /etc/ansible/site.yml
 
