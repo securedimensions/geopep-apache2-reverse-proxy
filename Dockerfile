@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update
 
-RUN apt-get -y install ansible python-apt libtiff
+RUN apt-get -y install ansible python-apt libtiff5 libgeotiff2 libgd3 libssl1.0.0 libxml2 libxslt1.1
 
 COPY ansible/* /etc/ansible/
 
@@ -21,7 +21,6 @@ COPY apache2/config/geopep.conf /etc/apache2/sites-enabled/
 RUN ansible-playbook -i "localhost," -c local /etc/ansible/site.yml
 
 RUN apt-get -y remove ansible python-apt;apt-get -y autoremove
-RUN apt-get -y install libtiff5 libgeotiff2 libgd3 libssl1.0.0 libxml2 libxslt1.1
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
