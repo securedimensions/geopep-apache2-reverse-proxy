@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update
 
-RUN apt-get -y install ansible python-apt
+RUN apt-get -y install ansible python-apt libtiff
 
 COPY ansible/* /etc/ansible/
 
