@@ -15,7 +15,7 @@ COPY mod_authz_geopep/libboost_system.* /usr/lib/
 COPY mod_authz_geopep/libboost_locale* /usr/lib/
 COPY mod_authz_geopep/libboost_iostreams* /usr/lib/
 COPY mod_authz_geopep/libz* /usr/lib/
-COPY apache2/html/ /var/www/html
+COPY apache2/html/ /var/www/html/
 COPY apache2/config/geopep.conf /etc/apache2/sites-enabled/
 RUN ls -r /var/www/html
 
