@@ -1,11 +1,15 @@
-FROM centos:latest
+FROM debian:jessie
 
 MAINTAINER Secure Dimensions <support@secure-dimensions.de>
 
-#ENV DEBIAN_FRONTEND noninteractive
-RUN rpm -Uvh http://elgis.argeo.org/repos/6/elgis-release-6-6_0.noarch.rpm
-RUN yum install -y centos-release-scl epel-release
-RUN yum install -y yum install ansible python27 libtiff libgeotiff libgdata openssl xslt xmlsec1 xmlsec1-openssl
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update
+
+RUN apt-get -y install ansible python-apt libtiff5 libgeotiff2 libgd3 libssl1.0.0 libxml2 libxslt1.1 libltdl-dev libxmlsec1-dev libssl-dev libxmlsec1-openssl
+RUN cd /lib/x86_64-linux-gnu \
+    && ln -s libssl.so.1.0.0 libssl.so.10 \
+    && ln -s libcrypto.so.1.0.0 libcrypto.so.10
 
 COPY ansible/* /etc/ansible/
 
@@ -20,7 +24,9 @@ RUN ls -r /var/www/html
 
 RUN ansible-playbook -i "localhost," -c local /etc/ansible/site.yml
 
-RUN yum remove -y centos-release-ansible26 python27
+RUN apt-get -y remove ansible python-apt;apt-get -y autoremove
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY docker-entrypoint.sh /
 
